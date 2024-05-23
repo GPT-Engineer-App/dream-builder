@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Heading, Input, Text, Textarea, VStack } from "@chakra-ui/react";
-import { create } from 'lib/openai';
+import { create, generateCodeSnippet } from 'lib/openai';
 import { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 
@@ -7,6 +7,7 @@ const Index = () => {
   const [userInput, setUserInput] = useState("");
   const [response, setResponse] = useState("");
   const [conversation, setConversation] = useState([]);
+  const [codeSnippet, setCodeSnippet] = useState("");
 
   const handleInputChange = (e) => setUserInput(e.target.value);
 
@@ -24,6 +25,14 @@ const Index = () => {
     const botMessage = { role: 'assistant', content: response.choices[0].message.content };
     setConversation([...updatedConversation, botMessage]);
     setResponse(response.choices[0].message.content);
+
+    // Generate code snippet
+    const codeResponse = await generateCodeSnippet({
+      messages: updatedConversation,
+      model: 'code-davinci-002' // Example model for code generation
+    });
+
+    setCodeSnippet(codeResponse.choices[0].text);
   };
 
   return (
@@ -66,6 +75,12 @@ const Index = () => {
             <Text mt={4} color="green.500">
               {response}
             </Text>
+          )}
+          {codeSnippet && (
+            <Box mt={4} p={4} bg="gray.100" borderRadius="md" w="100%">
+              <Heading size="sm" mb={2}>Generated Code Snippet:</Heading>
+              <Text fontFamily="monospace" whiteSpace="pre-wrap">{codeSnippet}</Text>
+            </Box>
           )}
         </VStack>
       </Flex>
