@@ -6,6 +6,7 @@ import { TreeNode, depthFirstSearch, breadthFirstSearch } from '../utils/treeSea
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import apiManager from '../utils/apiManager'; // Import the API Manager
 import { generateSemiSyntheticData, fineTuneModel } from '../utils/semiSyntheticDataGenerator'; // Import the semi-synthetic data generator
+import { trackEvent } from '../utils/analytics'; // Import the trackEvent function
 
 const Index = () => {
   const [userInput, setUserInput] = useState("");
@@ -18,6 +19,7 @@ const Index = () => {
   const handleInputChange = (e) => setUserInput(e.target.value);
 
   const handleSubmit = async () => {
+    trackEvent('submit', { userInput }); // Track the submit event
     const newMessage = { role: 'user', content: userInput };
     const updatedConversation = [...conversation, newMessage];
     setConversation(updatedConversation);
@@ -104,6 +106,7 @@ const Index = () => {
   exampleAPIUsage();
 
   const handleGenerateData = async () => {
+    trackEvent('generate_data'); // Track the generate data event
     const realData = [
       { input: 'Example input 1', output: 'Example output 1' },
       { input: 'Example input 2', output: 'Example output 2' },
