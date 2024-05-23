@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Heading, Input, Text, Textarea, VStack } from "@chakra-ui/react";
-import { create, generateCodeSnippet } from 'lib/openai';
+import { create, generateCodeSnippet, detectErrors, correctErrors } from 'lib/openai';
 import { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 
@@ -8,6 +8,8 @@ const Index = () => {
   const [response, setResponse] = useState("");
   const [conversation, setConversation] = useState([]);
   const [codeSnippet, setCodeSnippet] = useState("");
+  const [errorDetection, setErrorDetection] = useState("");
+  const [correctedCode, setCorrectedCode] = useState("");
 
   const handleInputChange = (e) => setUserInput(e.target.value);
 
@@ -32,7 +34,16 @@ const Index = () => {
       model: 'code-davinci-002' // Example model for code generation
     });
 
-    setCodeSnippet(codeResponse.choices[0].text);
+    const generatedCode = codeResponse.choices[0].text;
+    setCodeSnippet(generatedCode);
+
+    // Detect errors in the generated code
+    const errorResponse = await detectErrors(generatedCode);
+    setErrorDetection(errorResponse.choices[0].message.content);
+
+    // Correct errors in the generated code
+    const correctionResponse = await correctErrors(generatedCode);
+    setCorrectedCode(correctionResponse.choices[0].message.content);
   };
 
   return (
@@ -80,6 +91,18 @@ const Index = () => {
             <Box mt={4} p={4} bg="gray.100" borderRadius="md" w="100%">
               <Heading size="sm" mb={2}>Generated Code Snippet:</Heading>
               <Text fontFamily="monospace" whiteSpace="pre-wrap">{codeSnippet}</Text>
+            </Box>
+          )}
+          {errorDetection && (
+            <Box mt={4} p={4} bg="red.100" borderRadius="md" w="100%">
+              <Heading size="sm" mb={2}>Detected Errors:</Heading>
+              <Text fontFamily="monospace" whiteSpace="pre-wrap">{errorDetection}</Text>
+            </Box>
+          )}
+          {correctedCode && (
+            <Box mt={4} p={4} bg="green.100" borderRadius="md" w="100%">
+              <Heading size="sm" mb={2}>Corrected Code Snippet:</Heading>
+              <Text fontFamily="monospace" whiteSpace="pre-wrap">{correctedCode}</Text>
             </Box>
           )}
         </VStack>
