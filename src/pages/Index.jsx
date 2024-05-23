@@ -1,16 +1,29 @@
 import { Box, Button, Flex, Heading, Input, Text, Textarea, VStack } from "@chakra-ui/react";
+import { create } from 'lib/openai';
 import { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 
 const Index = () => {
   const [userInput, setUserInput] = useState("");
   const [response, setResponse] = useState("");
+  const [conversation, setConversation] = useState([]);
 
   const handleInputChange = (e) => setUserInput(e.target.value);
 
-  const handleSubmit = () => {
-    // Placeholder for handling user input submission
-    setResponse("Thank you for your input! We'll get back to you soon.");
+  const handleSubmit = async () => {
+    const newMessage = { role: 'user', content: userInput };
+    const updatedConversation = [...conversation, newMessage];
+    setConversation(updatedConversation);
+    setUserInput("");
+
+    const response = await create({
+      messages: updatedConversation,
+      model: 'gpt-3.5-turbo'
+    });
+
+    const botMessage = { role: 'assistant', content: response.choices[0].message.content };
+    setConversation([...updatedConversation, botMessage]);
+    setResponse(response.choices[0].message.content);
   };
 
   return (
@@ -32,6 +45,13 @@ const Index = () => {
         </Text>
 
         <VStack spacing={4} w="100%" maxW={{ base: "100%", md: "600px" }}>
+          <Box w="100%" bg="white" p={4} borderRadius="md" boxShadow="md">
+            {conversation.map((msg, index) => (
+              <Text key={index} alignSelf={msg.role === 'user' ? 'flex-start' : 'flex-end'} color={msg.role === 'user' ? 'blue.500' : 'green.500'}>
+                {msg.content}
+              </Text>
+            ))}
+          </Box>
           <Textarea
             value={userInput}
             onChange={handleInputChange}
