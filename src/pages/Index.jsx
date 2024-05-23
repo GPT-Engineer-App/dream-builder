@@ -2,6 +2,7 @@ import { Box, Button, Flex, Heading, Input, Text, Textarea, VStack } from "@chak
 import { create, generateCodeSnippet, detectErrors, correctErrors } from 'lib/openai';
 import { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
+import { TreeNode, depthFirstSearch, breadthFirstSearch } from '../utils/treeSearch';
 
 const Index = () => {
   const [userInput, setUserInput] = useState("");
@@ -45,6 +46,28 @@ const Index = () => {
     const correctionResponse = await correctErrors(generatedCode);
     setCorrectedCode(correctionResponse.choices[0].message.content);
   };
+
+  // Example usage of tree-search algorithms
+  const exampleTreeSearch = () => {
+    const root = new TreeNode('Root');
+    const child1 = new TreeNode('Child 1');
+    const child2 = new TreeNode('Child 2');
+    const grandChild1 = new TreeNode('GrandChild 1');
+    const grandChild2 = new TreeNode('GrandChild 2');
+
+    root.addChild(child1);
+    root.addChild(child2);
+    child1.addChild(grandChild1);
+    child2.addChild(grandChild2);
+
+    console.log('DFS Traversal:');
+    depthFirstSearch(root, value => console.log(value));
+
+    console.log('BFS Traversal:');
+    breadthFirstSearch(root, value => console.log(value));
+  };
+
+  exampleTreeSearch();
 
   return (
     <Box>
