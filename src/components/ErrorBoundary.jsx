@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Box, Heading, Text, Button } from "@chakra-ui/react";
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -16,6 +16,10 @@ class ErrorBoundary extends Component {
     console.error("ErrorBoundary caught an error", error, errorInfo);
   }
 
+  handleReload = () => {
+    window.location.reload();
+  };
+
   render() {
     if (this.state.hasError) {
       return (
@@ -23,6 +27,7 @@ class ErrorBoundary extends Component {
           <Heading as="h1" mb={4}>Something went wrong.</Heading>
           <Text>{this.state.error && this.state.error.toString()}</Text>
           <Text>{this.state.errorInfo && this.state.errorInfo.componentStack}</Text>
+        <Button mt={4} colorScheme="teal" onClick={this.handleReload}>Reload Page</Button>
         </Box>
       );
     }
