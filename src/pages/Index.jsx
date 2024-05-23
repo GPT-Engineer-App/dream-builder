@@ -3,6 +3,7 @@ import { create, generateCodeSnippet, detectErrors, correctErrors } from 'lib/op
 import { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { TreeNode, depthFirstSearch, breadthFirstSearch } from '../utils/treeSearch';
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
 const Index = () => {
   const [userInput, setUserInput] = useState("");
@@ -77,6 +78,7 @@ const Index = () => {
           <Button variant="link" color="white" mr={4}>Home</Button>
           <Button variant="link" color="white" mr={4}>Features</Button>
           <Button variant="link" color="white" mr={4}>About</Button>
+          <Button variant="link" color="white" as={Link} to="/documentation">Documentation</Button> {/* Add Documentation link */}
           <Button variant="link" color="white">Contact</Button>
         </Flex>
       </Flex>
