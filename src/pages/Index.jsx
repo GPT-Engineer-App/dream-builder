@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { TreeNode, depthFirstSearch, breadthFirstSearch } from '../utils/treeSearch';
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import apiManager from '../utils/apiManager'; // Import the API Manager
 
 const Index = () => {
   const [userInput, setUserInput] = useState("");
@@ -69,6 +70,37 @@ const Index = () => {
   };
 
   exampleTreeSearch();
+
+  // Example usage of API Manager
+  const exampleAPIUsage = async () => {
+    try {
+      const paymentResponse = await apiManager.makeRequest('paymentGateway', {
+        apiKey: 'your-payment-gateway-api-key',
+        data: { amount: 100, currency: 'USD' }
+      });
+      console.log('Payment Response:', paymentResponse);
+
+      const socialMediaResponse = await apiManager.makeRequest('socialMedia', {
+        apiKey: 'your-social-media-api-key',
+        endpoint: 'post',
+        method: 'POST',
+        data: { content: 'Hello, world!' }
+      });
+      console.log('Social Media Response:', socialMediaResponse);
+
+      const dataStorageResponse = await apiManager.makeRequest('dataStorage', {
+        apiKey: 'your-data-storage-api-key',
+        endpoint: 'upload',
+        method: 'POST',
+        data: { file: 'your-file-data' }
+      });
+      console.log('Data Storage Response:', dataStorageResponse);
+    } catch (error) {
+      console.error('API Request Error:', error);
+    }
+  };
+
+  exampleAPIUsage();
 
   return (
     <Box>
