@@ -5,6 +5,7 @@ import { FaPaperPlane } from "react-icons/fa";
 import { TreeNode, depthFirstSearch, breadthFirstSearch } from '../utils/treeSearch';
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import apiManager from '../utils/apiManager'; // Import the API Manager
+import { generateSemiSyntheticData, fineTuneModel } from '../utils/semiSyntheticDataGenerator'; // Import the semi-synthetic data generator
 
 const Index = () => {
   const [userInput, setUserInput] = useState("");
@@ -102,6 +103,20 @@ const Index = () => {
 
   exampleAPIUsage();
 
+  const handleGenerateData = async () => {
+    const realData = [
+      { input: 'Example input 1', output: 'Example output 1' },
+      { input: 'Example input 2', output: 'Example output 2' },
+      // Add more real data samples as needed
+    ];
+
+    const semiSyntheticData = await generateSemiSyntheticData(realData, 10); // Generate 10 synthetic samples
+    console.log('Semi-Synthetic Data:', semiSyntheticData);
+
+    const fineTuneResponse = await fineTuneModel(semiSyntheticData);
+    console.log('Fine-Tune Response:', fineTuneResponse);
+  };
+
   return (
     <Box>
       <Flex as="nav" bg="blue.800" color="white" p={4} justifyContent="space-between" alignItems="center" wrap="wrap" direction={{ base: "column", md: "row" }}>
@@ -138,6 +153,9 @@ const Index = () => {
           />
           <Button colorScheme="blue" onClick={handleSubmit} rightIcon={<FaPaperPlane />}>
             Submit
+          </Button>
+          <Button colorScheme="blue" onClick={handleGenerateData}>
+            Generate Semi-Synthetic Data
           </Button>
           {response && (
             <Text mt={4} color="green.500">
