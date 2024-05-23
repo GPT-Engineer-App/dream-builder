@@ -15,7 +15,7 @@ const Index = () => {
 
   return (
     <Box>
-      <Flex as="nav" bg="blue.800" color="white" p={4} justifyContent="space-between" alignItems="center">
+      <Flex as="nav" bg="blue.800" color="white" p={4} justifyContent="space-between" alignItems="center" wrap="wrap" direction={{ base: "column", md: "row" }}>
         <Heading size="md">InnovatorX</Heading>
         <Flex>
           <Button variant="link" color="white" mr={4}>Home</Button>
@@ -25,13 +25,13 @@ const Index = () => {
         </Flex>
       </Flex>
 
-      <Flex direction="column" align="center" justify="center" p={10} bg="gray.50" minH="80vh">
+      <Flex direction={{ base: "column", md: "row" }} align={{ base: "stretch", md: "center" }} justify="center" p={{ base: 4, md: 10 }} bg="gray.50" minH="80vh">
         <Heading mb={4}>Welcome to InnovatorX</Heading>
-        <Text fontSize="lg" mb={6} textAlign="center" maxW="600px">
+        <Text fontSize={{ base: "lg", md: "xl" }} mb={6} textAlign="center" maxW="600px">
           InnovatorX is your go-to platform for innovative solutions. Describe your requirements, and we'll help you bring your ideas to life.
         </Text>
 
-        <VStack spacing={4} w="100%" maxW="600px">
+        <VStack spacing={4} w="100%" maxW={{ base: "100%", md: "600px" }}>
           <Textarea
             value={userInput}
             onChange={handleInputChange}
