@@ -1,10 +1,10 @@
 import { Box, Button, Flex, Heading, Input, Text, Textarea, VStack } from "@chakra-ui/react";
-import { create, generateCodeSnippet, detectErrors, correctErrors } from 'lib/openai';
+import { create, generateCodeSnippet, detectErrors, correctErrors, generateSemiSyntheticData, fineTuneModel } from 'lib/openai';
 import { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
 import { TreeNode, depthFirstSearch, breadthFirstSearch } from '../utils/treeSearch';
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
-import apiManager from '../utils/apiManager'; // Import the API Manager
+import { Link } from "react-router-dom";
+import apiManager from '../utils/apiManager';
 
 const Index = () => {
   const [userInput, setUserInput] = useState("");
@@ -13,6 +13,8 @@ const Index = () => {
   const [codeSnippet, setCodeSnippet] = useState("");
   const [errorDetection, setErrorDetection] = useState("");
   const [correctedCode, setCorrectedCode] = useState("");
+  const [semiSyntheticData, setSemiSyntheticData] = useState([]);
+  const [fineTunedModel, setFineTunedModel] = useState(null);
 
   const handleInputChange = (e) => setUserInput(e.target.value);
 
@@ -34,7 +36,7 @@ const Index = () => {
     // Generate code snippet
     const codeResponse = await generateCodeSnippet({
       messages: updatedConversation,
-      model: 'code-davinci-002' // Example model for code generation
+      model: 'code-davinci-002'
     });
 
     const generatedCode = codeResponse.choices[0].text;
@@ -47,6 +49,21 @@ const Index = () => {
     // Correct errors in the generated code
     const correctionResponse = await correctErrors(generatedCode);
     setCorrectedCode(correctionResponse.choices[0].message.content);
+
+    // Generate semi-synthetic data
+    const semiSyntheticDataResponse = await generateSemiSyntheticData({
+      prompt: userInput,
+      model: 'gpt-3.5-turbo',
+      num_samples: 5
+    });
+    setSemiSyntheticData(semiSyntheticDataResponse);
+
+    // Fine-tune the model with semi-synthetic data
+    const fineTunedModelResponse = await fineTuneModel({
+      trainingData: semiSyntheticDataResponse,
+      model: 'gpt-3.5-turbo'
+    });
+    setFineTunedModel(fineTunedModelResponse);
   };
 
   // Example usage of tree-search algorithms
@@ -110,7 +127,7 @@ const Index = () => {
           <Button variant="link" color="white" mr={4}>Home</Button>
           <Button variant="link" color="white" mr={4}>Features</Button>
           <Button variant="link" color="white" mr={4}>About</Button>
-          <Button variant="link" color="white" as={Link} to="/documentation">Documentation</Button> {/* Add Documentation link */}
+          <Button variant="link" color="white" as={Link} to="/documentation">Documentation</Button>
           <Button variant="link" color="white">Contact</Button>
         </Flex>
       </Flex>
@@ -160,6 +177,20 @@ const Index = () => {
             <Box mt={4} p={4} bg="green.100" borderRadius="md" w="100%">
               <Heading size="sm" mb={2}>Corrected Code Snippet:</Heading>
               <Text fontFamily="monospace" whiteSpace="pre-wrap">{correctedCode}</Text>
+            </Box>
+          )}
+          {semiSyntheticData.length > 0 && (
+            <Box mt={4} p={4} bg="yellow.100" borderRadius="md" w="100%">
+              <Heading size="sm" mb={2}>Semi-Synthetic Data:</Heading>
+              {semiSyntheticData.map((data, index) => (
+                <Text key={index} fontFamily="monospace" whiteSpace="pre-wrap">{data}</Text>
+              ))}
+            </Box>
+          )}
+          {fineTunedModel && (
+            <Box mt={4} p={4} bg="purple.100" borderRadius="md" w="100%">
+              <Heading size="sm" mb={2}>Fine-Tuned Model:</Heading>
+              <Text fontFamily="monospace" whiteSpace="pre-wrap">{JSON.stringify(fineTunedModel, null, 2)}</Text>
             </Box>
           )}
         </VStack>
