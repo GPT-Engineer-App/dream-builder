@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, Input, Text, Textarea, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Text, Textarea, VStack } from "@chakra-ui/react";
 import { create, generateCodeSnippet, detectErrors, correctErrors } from 'lib/openai';
 import { useState } from "react";
 import { FaPaperPlane } from "react-icons/fa";
